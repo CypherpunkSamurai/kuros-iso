@@ -12,4 +12,4 @@ jobs:
 
     steps:
     - name: Run a one-line script
-      run: bash build-kuros.sh
+      run: bash ./build-kuros.sh
