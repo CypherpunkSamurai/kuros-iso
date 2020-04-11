@@ -8,8 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-16.04
     steps:
-    - name: Run a one-line script
-      run: bash ./build-kuros.sh
+    - uses: actions/checkout@v2
+    - name: Run builder script
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: bash ./build.sh
