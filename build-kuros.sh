@@ -98,6 +98,8 @@ xorriso \
         /boot/grub/bios.img=$HOME/LIVE_BOOT/buster/bios.img         \
         /EFI/efiboot.img=$HOME/LIVE_BOOT/buster/efiboot.img
 
+export REPO_SLUG="sudo-give-me-coffee/kuros-iso"
+
 wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
 bash upload.sh "${HOME}/LIVE_BOOT/KurOS_daily.iso"
 
