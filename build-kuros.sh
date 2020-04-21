@@ -104,4 +104,6 @@ export REPO_SLUG="sudo-give-me-coffee/kuros-iso"
 wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
 bash upload.sh "${HOME}/LIVE_BOOT/KurOS_daily.iso"
 
+ls -R "${HOME}/LIVE_BOOT/image"  
+
 
