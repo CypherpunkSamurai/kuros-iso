@@ -10,15 +10,16 @@ sudo apt-get install debootstrap        \
 
 mkdir -p $HOME/LIVE_BOOT/chroot
 
-sudo debootstrap --arch=amd64                     \
-                 --variant=minbase                \
-                 buster                           \
-                 $HOME/LIVE_BOOT/chroot           \
+sudo debootstrap --components=main,contrib,nonfree  \
+                 --variant=minbase                  \
+                 --include=linux-generic,grub-pc    \
+                 --arch=amd64 buster                \
+                 ${HOME}/LIVE_BOOT/chroot           \
                  http://ftp.us.debian.org/debian/
                  
-sudo chroot $HOME/LIVE_BOOT/chroot bash -c 'echo "debian-live" > /etc/hostname'
+sudo chroot $HOME/LIVE_BOOT/chroot bash -c 'echo "kuros-live" > /etc/hostname'
 sudo chroot $HOME/LIVE_BOOT/chroot apt-get update
-sudo chroot $HOME/LIVE_BOOT/chroot apt-get -y --no-install-recommends install linux-image-4.19.0-8-amd64 live-boot systemd-sysv
+sudo chroot $HOME/LIVE_BOOT/chroot apt-get -y --no-install-recommends install live-boot systemd-sysv
                  
 mkdir -p $HOME/LIVE_BOOT/{buster,image/live}
 
