@@ -1,7 +1,14 @@
 #!/bin/bash
 
+sudo apt-get install debootstrap        \
+                     squashfs-tools     \
+                     xorriso            \
+                     grub-pc-bin        \
+                     grub-efi-amd64-bin \
+                     mtools -y
+
 # Remoção de arquivos de compilaçoes anteriores
-sudo rm -rfv $HOME/kuros;mkdir -pv $HOME/kuros
+sudo rm -rfv $HOME/kuros;mkdir -pv $HOME/kuros/chroot
 
 # Criação do sistema base
 sudo debootstrap \
