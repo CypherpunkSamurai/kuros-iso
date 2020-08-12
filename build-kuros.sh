@@ -242,3 +242,9 @@ sudo xorriso \
 
 # Geração do MD5 externo da imagem de instalação.
 md5sum ../iso/kuros-19.10-amd64.iso > ../iso/kuros-19.10-amd64.md5
+
+
+export REPO_SLUG="sudo-give-me-coffee/kuros-iso"
+
+wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
+bash upload.sh ../iso/kuros-19.10-amd64.iso
