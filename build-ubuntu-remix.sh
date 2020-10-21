@@ -8,7 +8,7 @@ sudo apt-get install debootstrap        \
                      mtools -y
 
 # Remoção de arquivos de compilaçoes anteriores
-sudo rm -rfv $HOME/kuros;mkdir -pv $HOME/kuros/chroot
+sudo rm -rfv $HOME/bunturemix;mkdir -pv $HOME/bunturemix/chroot
 
 # Criação do sistema base
 sudo debootstrap \
@@ -16,50 +16,50 @@ sudo debootstrap \
     --variant=minbase \
     --components=main,multiverse,universe \
     focal \
-    $HOME/kuros/chroot
+    $HOME/bunturemix/chroot
 #    --include=fish \
 
 # Primeira etapa da montagem do enjaulamento do sistema base
-sudo mount --bind /dev $HOME/kuros/chroot/dev
-sudo mount --bind /run $HOME/kuros/chroot/run
-sudo chroot $HOME/kuros/chroot mount none -t proc /proc
-sudo chroot $HOME/kuros/chroot mount none -t devpts /dev/pts
-sudo chroot $HOME/kuros/chroot sh -c "export HOME=/root"
-echo "kuros" | sudo tee $HOME/kuros/chroot/etc/hostname
+sudo mount --bind /dev $HOME/bunturemix/chroot/dev
+sudo mount --bind /run $HOME/bunturemix/chroot/run
+sudo chroot $HOME/bunturemix/chroot mount none -t proc /proc
+sudo chroot $HOME/bunturemix/chroot mount none -t devpts /dev/pts
+sudo chroot $HOME/bunturemix/chroot sh -c "export HOME=/root"
+echo "bunturemix" | sudo tee $HOME/bunturemix/chroot/etc/hostname
 
 # Adição dos repositórios principais do Ubuntu
-cat <<EOF | sudo tee $HOME/kuros/chroot/etc/apt/sources.list
+cat <<EOF | sudo tee $HOME/bunturemix/chroot/etc/apt/sources.list
 deb http://us.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
 deb http://us.archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
 deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
 EOF
 
-# Repositórios adicionais
-#sudo chroot $HOME/kuros/chroot apt update
-#sudo chroot $HOME/kuros/chroot apt install -y software-properties-common
+# Additional repositories
+#sudo chroot $HOME/bunturemix/chroot apt update
+#sudo chroot $HOME/bunturemix/chroot apt install -y software-properties-common
 # PPA 1
 
 
-sudo chroot $HOME/kuros/chroot add-apt-repository -yn ppa:kubuntu-ppa/backports
+sudo chroot $HOME/bunturemix/chroot add-apt-repository -yn ppa:kubuntu-ppa/backports
 
 
-# Segunda etapa da montagem do enjaulamento
-sudo chroot $HOME/kuros/chroot apt update
-sudo chroot $HOME/kuros/chroot apt install -y systemd-sysv
-sudo chroot $HOME/kuros/chroot sh -c "dbus-uuidgen > /etc/machine-id"
-sudo chroot $HOME/kuros/chroot ln -fs /etc/machine-id /var/lib/dbus/machine-id
-sudo chroot $HOME/kuros/chroot dpkg-divert --local --rename --add /sbin/initctl
-sudo chroot $HOME/kuros/chroot ln -s /bin/true /sbin/initctl
+# Second stage of caging assembly
+sudo chroot $HOME/bunturemix/chroot apt update
+sudo chroot $HOME/bunturemix/chroot apt install -y systemd-sysv
+sudo chroot $HOME/bunturemix/chroot sh -c "dbus-uuidgen > /etc/machine-id"
+sudo chroot $HOME/bunturemix/chroot ln -fs /etc/machine-id /var/lib/dbus/machine-id
+sudo chroot $HOME/bunturemix/chroot dpkg-divert --local --rename --add /sbin/initctl
+sudo chroot $HOME/bunturemix/chroot ln -s /bin/true /sbin/initctl
 
-# Variáveis de ambiente para execução automatizada do script
-sudo chroot $HOME/kuros/chroot sh -c "echo 'grub-pc grub-pc/install_devices_empty   boolean true' | debconf-set-selections"
-sudo chroot $HOME/kuros/chroot sh -c "echo 'locales locales/locales_to_be_generated multiselect pt_BR.UTF-8 UTF-8' | debconf-set-selections"
-sudo chroot $HOME/kuros/chroot sh -c "echo 'locales locales/default_environment_locale select pt_BR.UTF-8' | debconf-set-selections"
-sudo chroot $HOME/kuros/chroot sh -c "echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections"
-sudo chroot $HOME/kuros/chroot sh -c "echo 'resolvconf resolvconf/linkify-resolvconf boolean false' | debconf-set-selections"
+# Environment variables for automated script execution
+sudo chroot $HOME/bunturemix/chroot sh -c "echo 'grub-pc grub-pc/install_devices_empty   boolean true' | debconf-set-selections"
+sudo chroot $HOME/bunturemix/chroot sh -c "echo 'locales locales/locales_to_be_generated multiselect pt_BR.UTF-8 UTF-8' | debconf-set-selections"
+sudo chroot $HOME/bunturemix/chroot sh -c "echo 'locales locales/default_environment_locale select pt_BR.UTF-8' | debconf-set-selections"
+sudo chroot $HOME/bunturemix/chroot sh -c "echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections"
+sudo chroot $HOME/bunturemix/chroot sh -c "echo 'resolvconf resolvconf/linkify-resolvconf boolean false' | debconf-set-selections"
 
-# Ferramentas base do Ubuntu
-sudo chroot $HOME/kuros/chroot apt install -y --fix-missing \
+# Ubuntu base tools
+sudo chroot $HOME/bunturemix/chroot apt install -y --fix-missing \
     casper \
     discover \
     laptop-detect \
@@ -74,20 +74,20 @@ sudo chroot $HOME/kuros/chroot apt install -y --fix-missing \
     wireless-tools \
     xorg 
 
-# Programas inclusos no sistema sem os extras recomendados
-sudo chroot $HOME/kuros/chroot apt install -y --no-install-recommends \
+# Programs included in the system without the recommended extras
+sudo chroot $HOME/bunturemix/chroot apt install -y --no-install-recommends \
     plasma-desktop  
 
 
-# Remoção de pacotes desnecessários
-sudo chroot $HOME/kuros/chroot apt autoremove 
+# Removing unnecessary packages
+sudo chroot $HOME/bunturemix/chroot apt autoremove 
 
-# Atualização do sistema
-sudo chroot $HOME/kuros/chroot apt dist-upgrade -y
+# System update
+sudo chroot $HOME/bunturemix/chroot apt dist-upgrade -y
 
-# Reconfiguração da rede
-sudo chroot $HOME/kuros/chroot apt install --reinstall resolvconf
-cat <<EOF | sudo tee $HOME/kuros/chroot/etc/NetworkManager/NetworkManager.conf
+# Network reconfiguration
+sudo chroot $HOME/bunturemix/chroot apt install --reinstall resolvconf
+cat <<EOF | sudo tee $HOME/bunturemix/chroot/etc/NetworkManager/NetworkManager.conf
 [main]
 rc-manager=resolvconf
 plugins=ifupdown,keyfile
@@ -95,29 +95,29 @@ dns=dnsmasq
 [ifupdown]
 managed=false
 EOF
-sudo chroot $HOME/kuros/chroot dpkg-reconfigure network-manager
+sudo chroot $HOME/bunturemix/chroot dpkg-reconfigure network-manager
 
-# Desmontagem do enjaulamento
-sudo chroot $HOME/kuros/chroot truncate -s 0 /etc/machine-id
-sudo chroot $HOME/kuros/chroot rm /sbin/initctl
-sudo chroot $HOME/kuros/chroot dpkg-divert --rename --remove /sbin/initctl
-sudo chroot $HOME/kuros/chroot apt clean
-sudo chroot $HOME/kuros/chroot rm -rfv /tmp/* ~/.bash_history
-sudo chroot $HOME/kuros/chroot umount /proc
-sudo chroot $HOME/kuros/chroot umount /dev/pts
-sudo chroot $HOME/kuros/chroot sh -c "export HISTSIZE=0"
-sudo umount $HOME/kuros/chroot/dev
-sudo umount $HOME/kuros/chroot/run
+# Dismantling the cage
+sudo chroot $HOME/bunturemix/chroot truncate -s 0 /etc/machine-id
+sudo chroot $HOME/bunturemix/chroot rm /sbin/initctl
+sudo chroot $HOME/bunturemix/chroot dpkg-divert --rename --remove /sbin/initctl
+sudo chroot $HOME/bunturemix/chroot apt clean
+sudo chroot $HOME/bunturemix/chroot rm -rfv /tmp/* ~/.bash_history
+sudo chroot $HOME/bunturemix/chroot umount /proc
+sudo chroot $HOME/bunturemix/chroot umount /dev/pts
+sudo chroot $HOME/bunturemix/chroot sh -c "export HISTSIZE=0"
+sudo umount $HOME/bunturemix/chroot/dev
+sudo umount $HOME/bunturemix/chroot/run
 
-# Configuração do GRUB
-echo "RESUME=none" | sudo tee $HOME/kuros/chroot/etc/initramfs-tools/conf.d/resume
-echo "FRAMEBUFFER=y" | sudo tee $HOME/kuros/chroot/etc/initramfs-tools/conf.d/splash
+# GRUB configuration
+echo "RESUME=none" | sudo tee $HOME/bunturemix/chroot/etc/initramfs-tools/conf.d/resume
+echo "FRAMEBUFFER=y" | sudo tee $HOME/bunturemix/chroot/etc/initramfs-tools/conf.d/splash
 
-# Layout português brasileiro para o teclado
-sudo sed -i 's/us/br/g' $HOME/kuros/chroot/etc/default/keyboard
+# Brazilian Portuguese keyboard layout
+sudo sed -i 's/us/br/g' $HOME/bunturemix/chroot/etc/default/keyboard
 
-# Criação dos arquivos de inicialização da imagem de instalação
-cd $HOME/kuros
+# Creating the installation image boot files
+cd $HOME/bunturemix
 mkdir -pv image/{boot/grub,casper,isolinux,preseed}
 # Kernel
 sudo cp chroot/boot/vmlinuz image/casper/vmlinuz
@@ -142,25 +142,25 @@ if loadfont /boot/grub/unicode.pf2 ; then
 fi
 
 menuentry "KurOS Daily" {
-   linux /casper/vmlinuz file=/cdrom/preseed/kuros.seed boot=casper quiet splash locale=pt_BR ---
+   linux /casper/vmlinuz file=/cdrom/preseed/bunturemix.seed boot=casper quiet splash locale=pt_BR ---
    initrd /casper/initrd
 }
 EOF
 # Loopback
 cat <<EOF > image/boot/grub/loopback.cfg
 menuentry "Unity XP(live-mode)" {
-   linux /casper/vmlinuz file=/cdrom/preseed/kuros.seed boot=casper quiet splash iso-scan/filename=\${iso_path} locale=pt_BR ---
+   linux /casper/vmlinuz file=/cdrom/preseed/bunturemix.seed boot=casper quiet splash iso-scan/filename=\${iso_path} locale=pt_BR ---
    initrd /casper/initrd
 }
 EOF
 # Preesed
-cat <<EOF > image/preseed/kuros.seed
+cat <<EOF > image/preseed/bunturemix.seed
 # Success command
 #d-i ubiquity/success_command string \
 sed -i 's/quiet splash/quiet splash loglevel=0 logo.nologo vt.global_cursor_default=0/g' /target/etc/default/grub ; \
 chroot /target update-grub
 EOF
-# Arquivos de manifesto
+# Manifest files
 sudo chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee image/casper/filesystem.manifest
 sudo cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
 sudo sed -i '/ubiquity/d' image/casper/filesystem.manifest-desktop
@@ -175,7 +175,7 @@ sudo sed -i '/os-prober/d' image/casper/filesystem.manifest-desktop
 # SquashFS
 sudo mksquashfs chroot image/casper/filesystem.squashfs -comp xz
 printf $(sudo du -sx --block-size=1 chroot | cut -f1) > image/casper/filesystem.size
-# Definições de disco
+# Disk definitions
 cat <<EOF > image/README.diskdefines
 #define DISKNAME  KUROS
 #define TYPE  binary
@@ -188,8 +188,8 @@ cat <<EOF > image/README.diskdefines
 #define TOTALNUM0  1
 EOF
 
-# Geração do GRUB para imagem de instalação
-cd $HOME/kuros/image
+# Generation of GRUB for installation image
+cd $HOME/bunturemix/image
 grub-mkstandalone \
    --format=x86_64-efi \
    --output=isolinux/bootx64.efi \
@@ -213,10 +213,10 @@ grub-mkstandalone \
    "boot/grub/grub.cfg=isolinux/grub.cfg"
 cat /usr/lib/grub/i386-pc/cdboot.img isolinux/core.img > isolinux/bios.img
 
-# Geração do MD5 interno da imagem de instalação
+# Generation of the internal MD5 of the installation image
 sudo /bin/bash -c '(find . -type f -print0 | xargs -0 md5sum | grep -v "\./md5sum.txt" > md5sum.txt)'
 
-# Compilação da imagem de instalação
+# Compiling the installation image
 mkdir -pv ../iso
 sudo xorriso \
    -as mkisofs \
@@ -234,17 +234,18 @@ sudo xorriso \
    -e EFI/efiboot.img \
    -no-emul-boot \
    -append_partition 2 0xef isolinux/efiboot.img \
-   -output "../iso/kuros-19.10-amd64.iso" \
+   -output "../iso/bunturemix-19.10-amd64.iso" \
    -graft-points \
       "." \
       /boot/grub/bios.img=isolinux/bios.img \
       /EFI/efiboot.img=isolinux/efiboot.img
 
-# Geração do MD5 externo da imagem de instalação.
-md5sum ../iso/kuros-19.10-amd64.iso > ../iso/kuros-19.10-amd64.md5
+# Generation of external MD5 of the installation image.
+md5sum ../iso/bunturemix-19.10-amd64.iso > ../iso/bunturemix-19.10-amd64.md5
 
 
-export REPO_SLUG="sudo-give-me-coffee/kuros-iso"
+export REPO_SLUG=$(echo -n $GITHUB_REPOSITORY)
 
-wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
-bash upload.sh ../iso/kuros-19.10-amd64.iso
+#wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
+
+bash upload.sh ../iso/bunturemix-19.10-amd64.iso
