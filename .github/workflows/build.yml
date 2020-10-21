@@ -1,17 +1,16 @@
 name: CI
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+  [starred, workflow_dispatch]
+  
 jobs:
   build:
     runs-on: ubuntu-16.04
     steps:
+    - name: Copy Scripts
     - uses: actions/checkout@v2
+      
     - name: Run builder script
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: bash ./build-kuros.sh
+      run: bash ./build-ubuntu-remix.sh
