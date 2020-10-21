@@ -244,7 +244,7 @@ sudo xorriso \
 md5sum ../iso/bunturemix-19.10-amd64.iso > ../iso/bunturemix-19.10-amd64.md5
 
 
-export REPO_SLUG=$(echo -n $GITHUB_REPOSITORY)
+export REPO_SLUG=$(echo -n $GITHUB_REPOSITORY_URL)
 
 #wget -q "https://raw.githubusercontent.com/probonopd/uploadtool/master/upload.sh"
 
