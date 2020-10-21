@@ -7,9 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-16.04
     steps:
-    - name: Copy Scripts
     - uses: actions/checkout@v2
-      
+    - name: Copy Scripts
     - name: Run builder script
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
