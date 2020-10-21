@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  [starred, workflow_dispatch]
+  [workflow_dispatch]
   
 jobs:
   build:
