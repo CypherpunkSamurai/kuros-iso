@@ -8,8 +8,9 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v2
-    - run:   echo ::set-env name=GITHUB_REPO_URL::'https://github.com/'$(echo $GITHUB_REPOSITORY)
+    - run: echo ::set-env name=GITHUB_REPOSITORY_URL::'https://github.com/'$(echo $GITHUB_REPOSITORY)
       shell: bash
+    - run: echo Running on $GITHUB_REPOSITORY_URL
     - name: Run builder script
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
